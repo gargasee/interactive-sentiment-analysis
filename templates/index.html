@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futuristic Sentiment Analysis</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔮 Sentiment Analyzer</h1>
+            <p>Experience the future of emotional intelligence.</p>
+        </header>
+        <main>
+            <textarea id="inputText" placeholder="Enter your thoughts here..."></textarea>
+            <button id="analyzeBtn">Analyze Sentiment</button>
+            <div id="result">
+                <h2>Results:</h2>
+                <p id="sentiment" class="output"></p>
+                <div id="graph"></div>
+            </div>
+        </main>
+        <footer>
+            <p>Developed by Aseem Garg</p>
+        </footer>
+    </div>
+    <script>
+        document.getElementById('analyzeBtn').addEventListener('click', async () => {
+            const text = document.getElementById('inputText').value;
+            const response = await fetch('/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text }),
+            });
+            const data = await response.json();
+            if (response.ok) {
+                document.getElementById('sentiment').textContent = `Sentiment: ${data.sentiment}`;
+                const graphDiv = document.getElementById('graph');
+                Plotly.newPlot(graphDiv, JSON.parse(data.graph).data, JSON.parse(data.graph).layout);
+            } else {
+                alert(data.error || 'An error occurred!');
+            }
+        });
+    </script>
+</body>
+</html>
